@@ -5,7 +5,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 30  # Justerer Timeout i tilfelle genereringen tar mer tid
+    Timeout: 30  # Request timer ut etter 30 sek. juster i tilfelle genereringen tar mer tid
     MemorySize: 256
     LoggingConfig:
       LogFormat: JSON
@@ -14,25 +14,25 @@ Resources:
   GenerateImageFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./
+      CodeUri: ./                   # ser i samme mappe
       Handler: app.lambda_handler
       Runtime: python3.8
       Environment:
         Variables:
           BUCKET_NAME: "pgr301-couch-explorers" # her defineres s3 bucket navn
           CANDIDATE_PREFIX: "9"
-      Policies:
+      Policies:         
         - AWSLambdaBasicExecutionRole
         - Statement:
             Effect: Allow
             Action:
-              - "s3:PutObject"
+              - "s3:PutObject"  # tillatelse for å skrive til bucket
             Resource:
               - "arn:aws:s3:::pgr301-couch-explorers/9/*"
         - Statement:
             Effect: Allow
             Action:
-              - "bedrock:InvokeModel"
+              - "bedrock:InvokeModel"  # tillatelse for å kalle tjenesten og generere bilder med Titan-modellen
             Resource: "*"
       Events:
         GenerateImageAPI:

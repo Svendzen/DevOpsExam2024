@@ -10,17 +10,25 @@ s3_client = boto3.client("s3")
 
 # Retrieve environment variables (from template.yaml)
 bucket_name = os.getenv("BUCKET_NAME")
-candidate_prefix = os.getenv("CANDIDATE_PREFIX", "9")
+candidate_prefix = os.getenv("CANDIDATE_PREFIX", "9")   # 9 is default if env variable is not available
 
 def lambda_handler(event, context):
     # Extract prompt from the incoming event body
     try:
         body = json.loads(event["body"])
-        prompt = body.get("prompt", "Default prompt text if none provided")
+        prompt = body.get("prompt")
+        
+        # Check if 'prompt' is provided, return error message
+        if not prompt:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"message": "Error: 'prompt' field is required in the request body."})
+            }
+
     except (json.JSONDecodeError, KeyError):
         return {
             "statusCode": 400,
-            "body": json.dumps({"message": "Invalid request body. 'prompt' field is required."})
+            "body": json.dumps({"message": "Invalid request body. Ensure 'prompt' field is included."})
         }
 
     # Generate a unique seed and S3 path for the image
