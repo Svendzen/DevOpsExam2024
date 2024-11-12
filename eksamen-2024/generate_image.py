@@ -8,12 +8,12 @@ import random
 bedrock_client = boto3.client("bedrock-runtime", region_name="us-east-1")
 s3_client = boto3.client("s3")
 
-# Define the model ID and S3 bucket name (replace with your actual bucket name)
+# Defining the model ID and S3 bucket name
 model_id = "amazon.titan-image-generator-v1"
-bucket_name = "pgr301-couch-explorers"
+bucket_name = "couch-explorers-9"
 
-# Frank; Important; Change this prompt to something else before the presentation with the investors!
-prompt = "Investors, with circus hats, giving money to developers with large smiles"
+# Prompt
+prompt = "A guy laying in bed in his pyjamas. He has a sleeping cap with the name Frank on it. He has a sudden realization he forgot something "
 
 seed = random.randint(0, 2147483647)
 s3_image_path = f"generated_images/titan_{seed}.png"
