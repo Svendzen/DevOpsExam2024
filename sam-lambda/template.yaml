@@ -17,11 +17,8 @@ Resources:
       CodeUri: ./
       Handler: app.lambda_handler
       Runtime: python3.9
-      Architectures:
-        - x86_64
       Environment:
         Variables:
-          AWS_REGION: "us-east-1"
           BUCKET_NAME: "pgr301-couch-explorers"
           CANDIDATE_PREFIX: "9"
       Policies:
@@ -48,6 +45,3 @@ Outputs:
   GenerateImageApiUrl:
     Description: "API Gateway endpoint URL for image generation"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/generate-image"
-  GenerateImageFunctionArn:
-    Description: "ARN for the Generate Image Lambda Function"
-    Value: !GetAtt GenerateImageFunction.Arn

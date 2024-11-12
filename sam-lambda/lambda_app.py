@@ -4,11 +4,10 @@ import json
 import random
 import os
 
-# Set up AWS clients
+# Set up the Bedrock client in `us-east-1` and S3 client in the default Lambda region (eu-west-1).
 bedrock_client = boto3.client("bedrock-runtime", region_name="us-east-1")
-s3_client = boto3.client("s3")
+s3_client = boto3.client("s3")  # Uses the region where Lambda is deployed (eu-west-1)
 
-# Define constants
 MODEL_ID = "amazon.titan-image-generator-v1"
 BUCKET_NAME = "pgr301-couch-explorers"
 CANDIDATE_PREFIX = "9"
