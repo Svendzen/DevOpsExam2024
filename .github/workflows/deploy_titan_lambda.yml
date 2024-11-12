@@ -35,9 +35,9 @@ jobs:
 
       # Bygg SAM-applikasjonen
       - name: Build SAM application
-        run: sam build
-
+        run: sam build --template-file sam-lambda/template.yaml
+        
       # Deploy SAM-applikasjonen
       - name: Deploy SAM application
         run: |
-          sam deploy --stack-name sam-lambda-stack-9 --region eu-west-1 --no-confirm-changeset --no-fail-on-empty-changeset --capabilities CAPABILITY_IAM
+          sam deploy --template-file sam-lambda/template.yaml --stack-name sam-lambda-stack-9 --region eu-west-1 --no-confirm-changeset --no-fail-on-empty-changeset --capabilities CAPABILITY_IAM
