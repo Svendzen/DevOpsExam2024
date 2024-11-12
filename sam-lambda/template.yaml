@@ -1,58 +1,53 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  sam-lambda
+  Lambda-funksjon for å generere AI-bilder basert på en prompt og lagre i S3.
 
-  Sample SAM Template for sam-lambda
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
-    MemorySize: 128
-
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    Timeout: 10  # Justerer Timeout i tilfelle genereringen tar mer tid
+    MemorySize: 256
     LoggingConfig:
       LogFormat: JSON
+
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  GenerateImageFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: ./
       Handler: app.lambda_handler
       Runtime: python3.9
       Architectures:
-      - x86_64
+        - x86_64
+      Environment:
+        Variables:
+          AWS_REGION: "us-east-1"
+          BUCKET_NAME: "pgr301-couch-explorers"
+          CANDIDATE_PREFIX: "9"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Effect: Allow
+            Action:
+              - "s3:PutObject"
+            Resource:
+              - "arn:aws:s3:::pgr301-couch-explorers/9/*"
+        - Statement:
+            Effect: Allow
+            Action:
+              - "bedrock:InvokeModel"
+            Resource: "*"
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        GenerateImageAPI:
+          Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /generate-image
+            Method: post
 
-  ApplicationResourceGroup:
-    Type: AWS::ResourceGroups::Group
-    Properties:
-      Name:
-        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
-      ResourceQuery:
-        Type: CLOUDFORMATION_STACK_1_0
-  ApplicationInsightsMonitoring:
-    Type: AWS::ApplicationInsights::Application
-    Properties:
-      ResourceGroupName:
-        Ref: ApplicationResourceGroup
-      AutoConfigurationEnabled: 'true'
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  GenerateImageApiUrl:
+    Description: "API Gateway endpoint URL for image generation"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/generate-image"
+  GenerateImageFunctionArn:
+    Description: "ARN for the Generate Image Lambda Function"
+    Value: !GetAtt GenerateImageFunction.Arn
