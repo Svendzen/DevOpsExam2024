@@ -3,7 +3,9 @@ name: Deploy SAM Application
 on:
   push:
     branches:
-      - main
+      - main            # Kjører worfklow på push til main branch
+  workflow_dispatch:   # For mulighet til å manuell kjøring av workflow
+    
 
 jobs:
   deploy:
@@ -12,11 +14,11 @@ jobs:
     steps:
       # Sjekk ut repoet
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Sett opp Python
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
