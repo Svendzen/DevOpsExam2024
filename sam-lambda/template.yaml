@@ -5,7 +5,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 10  # Justerer Timeout i tilfelle genereringen tar mer tid
+    Timeout: 30  # Justerer Timeout i tilfelle genereringen tar mer tid
     MemorySize: 256
     LoggingConfig:
       LogFormat: JSON
@@ -16,10 +16,10 @@ Resources:
     Properties:
       CodeUri: ./
       Handler: app.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.8
       Environment:
         Variables:
-          BUCKET_NAME: "pgr301-couch-explorers"
+          BUCKET_NAME: "pgr301-couch-explorers" # her defineres s3 bucket navn
           CANDIDATE_PREFIX: "9"
       Policies:
         - AWSLambdaBasicExecutionRole
