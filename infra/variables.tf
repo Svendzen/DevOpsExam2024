@@ -1,18 +1,29 @@
-# variables.tf
+variable "sqs_queue_name" {
+  type        = string
+  default     = "image-generation-queue-9"
+  description = "Navn på SQS køen for bildegenerering"
+}
+
+variable "lambda_role_name" {
+  type        = string
+  default     = "lambda_execution_role_9"
+  description = "IAM rolle for Lambda funksjonen"
+}
+
+variable "lambda_function_name" {
+  type        = string
+  default     = "Lambda_Image_Processor_9"
+  description = "Navn på Lambda-funksjonen for bildegenerering"
+}
+
 variable "bucket_name" {
-  description = "S3 bucket for storing generated images"
   type        = string
   default     = "pgr301-couch-explorers"
+  description = "S3 bucket for lagring av genererte bilder"
 }
 
 variable "candidate_prefix" {
-  description = "Candidate prefix for S3 storage path"
   type        = string
   default     = "9"
-}
-
-variable "sqs_queue_name" {
-  description = "Name of the SQS queue for image generation"
-  type        = string
-  default     = "image-generation-queue"
+  description = "Samme som kandidat nummer"
 }

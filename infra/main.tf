@@ -6,7 +6,7 @@ resource "aws_sqs_queue" "image_generation_queue" {
 
 # IAM-rolle
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role"
+  name = var.lambda_role_name  # Bruker variabel for IAM-rollen
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -41,22 +41,42 @@ resource "aws_iam_role_policy" "lambda_policy" {
         ],
         Effect   = "Allow",
         Resource = "arn:aws:s3:::${var.bucket_name}/${var.candidate_prefix}/*"
+      },
+      {
+        Action = [
+          "bedrock:InvokeModel"
+        ],
+        Effect   = "Allow",
+        Resource = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-image-generator-v1"
       }
     ]
   })
 }
 
+# Oppretter en ZIP-fil av lambda_sqs.py for bruk i Lambda-funksjonen
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/lambda_sqs.py"
+  output_path = "${path.module}/lambda_sqs.zip"
+}
+
+
 # Lambda-funksjonen
 resource "aws_lambda_function" "image_processor_lambda" {
-  filename         = "lambda_sqs.zip"
-  function_name    = "ImageProcessorLambda"
+  filename         = data.archive_file.lambda_zip.output_path  # peker på oppdatert ZIP-fil
+  function_name    = var.lambda_function_name  # Bruker variabel for Lambda-funksjonsnavnet
   role             = aws_iam_role.lambda_execution_role.arn
   handler          = "lambda_sqs.lambda_handler"
   runtime          = "python3.8"
+  timeout          = 30  # Øker timeout til 30 sekunder
+  memory_size      = 256  # Øker minne til 256 MB for bedre ytelse
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256  # Automatisk hash-basert oppdatering
+
 
   environment {
     variables = {
-      BUCKET_NAME = "arn:aws:s3:::${var.bucket_name}/${var.candidate_prefix}/*"
+      BUCKET_NAME      = var.bucket_name  # Bruker variabel for bucket-navnet
+      CANDIDATE_PREFIX = var.candidate_prefix
     }
   }
 }

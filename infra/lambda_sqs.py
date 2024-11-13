@@ -4,22 +4,26 @@ import json
 import random
 import os
 
-# Frank; This is probalby be closer to what we need in production. Let's get funding first!
-
+# AWS-klienter for Bedrock og S3
 bedrock_client = boto3.client("bedrock-runtime", region_name="us-east-1")
 s3_client = boto3.client("s3")
 
+# Modellen og bucket-informasjonen
 MODEL_ID = "amazon.titan-image-generator-v1"
-BUCKET_NAME =  os.environ["BUCKET_NAME"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]  # Samme bucket som SAM-applikasjonen
+CANDIDATE_PREFIX = os.environ.get("CANDIDATE_PREFIX", "9")  # Legger til kandidatnummer
 
 def lambda_handler(event, context):
-    # Loop through all SQS records in the event
+    # Loop gjennom alle SQS-meldinger
     for record in event["Records"]:
-        # Extract the SQS message body
+        # Henter meldingsinnhold (prompt) fra SQS
         prompt = record["body"]
         seed = random.randint(0, 2147483647)
-        s3_image_path = f"images/titan_{seed}.png"
-        # Prepare the request for image generation
+        
+        # Setter riktig filsti for lagring i S3
+        s3_image_path = f"{CANDIDATE_PREFIX}/generated_images/from_queue/titan_{seed}.png"
+        
+        # Konfigurasjon for bildegenerering
         native_request = {
             "taskType": "TEXT_IMAGE",
             "textToImageParams": {"text": prompt},
@@ -33,7 +37,7 @@ def lambda_handler(event, context):
             },
         }
 
-        # Invoke the model
+        # Kaller modellen for å generere bildet
         response = bedrock_client.invoke_model(
             modelId=MODEL_ID,
             body=json.dumps(native_request)
@@ -43,10 +47,10 @@ def lambda_handler(event, context):
         base64_image_data = model_response["images"][0]
         image_data = base64.b64decode(base64_image_data)
 
-        # Upload the image to S3
+        # Lagrer bildet i S3-bucket med riktig filsti
         s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_data)
 
     return {
         "statusCode": 200,
-        "body": json.dumps("")
+        "body": json.dumps("Bildegenerering fullført. Vellykket lagring av generert bilde..")
     }

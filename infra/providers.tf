@@ -1,5 +1,3 @@
-# providers.tf
-
 terraform {
   required_version = ">= 1.9.0"
 
@@ -12,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket = "pgr301-2024-terraform-state"  # Bucket for lagring av Terraform state
-    key    = "infra/terraform.tfstate"       # Filsti for state-filen i bucketen
+    key    = "9/terraform.tfstate"       # Filsti for state-filen i bucketen
     region = "eu-west-1"                     # Region for S3-bucketen
   }
 }
