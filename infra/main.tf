@@ -2,6 +2,9 @@
 resource "aws_sqs_queue" "image_generation_queue" {
   name                       = var.sqs_queue_name
   visibility_timeout_seconds = 60
+  tags = {
+    Project = "ImageProcessingApp" # Denne linjen ble lagt som en ikke-destruktiv test
+  }
 }
 
 # IAM-rolle
