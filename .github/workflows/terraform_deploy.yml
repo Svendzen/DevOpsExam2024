@@ -29,17 +29,22 @@ jobs:
 
       - name: Initialize Terraform
         run: terraform init        # Initialiserer Terraform
+        working-directory: infra
 
       - name: Terraform Format
-        run: terraform fmt -check  # Sjekker format 
+        run: terraform fmt -check  # Sjekker format
+        working-directory: infra
 
       - name: Terraform Validate
         run: terraform validate    # Validerer konfigurasjonen.
+        working-directory: infra
 
       - name: Terraform Plan
         if: github.ref != 'refs/heads/main'  # Hvis branchen ikke er main, kjører den terraform plan 
         run: terraform plan
+        working-directory: infra
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'  # Hvis branchen er main, kjører den terraform apply 
         run: terraform apply -auto-approve
+        working-directory: infra
