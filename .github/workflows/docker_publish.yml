@@ -1,0 +1,32 @@
+name: Publish Docker Image
+
+# Trigger for hver push til main-branchen
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      # Sjekk ut repoet
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Logg inn i Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}   
+
+      # Bygg Docker image
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sqs-client:latest -f java_sqs_client/Dockerfile java_sqs_client
+
+      # Pushe Docker image til Docker Hub
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/sqs-client:latest
