@@ -1,5 +1,7 @@
 .c9/
 .venv/
+.terraform/
+
 
 # Ignorer Terraform state-filer og sikkerhetskopier
 *.tfstate
@@ -9,6 +11,9 @@
 
 # Ignorer ZIP-filer og andre binærfiler
 *.zip
+
+# Ignorer JAR-filer
+*.jar
 
 # Ignorer Terraform-krasjlogger
 crash.log
