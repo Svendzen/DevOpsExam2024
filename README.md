@@ -1,7 +1,7 @@
 # Dev Ops Exam 2024
 
 ### Leveranser:
-#### Leveranse 1A:
+#### Oppgave 1A:
 
 ##### HTTP Endpoint
 
@@ -23,5 +23,28 @@ Send en JSON-payload med en `prompt` som beskriver hva slags bilde som skal gene
 }
 ```
 
-#### Leveranse 1B:
+#### Oppgave 1B:
 [Vellykket kjøring av GitHub Actions workflow som har deployet SAM-applikasjonen til AWS.](https://github.com/Svendzen/DevOpsExam2024/actions/runs/11801530824)
+
+
+### Oppgave 2:
+
+1. **Lenke til kjørt GitHub Actions workflow på main**: 
+    
+    [Vellykket workflow for terraform apply på main](https://github.com/Svendzen/DevOpsExam2024/actions/runs/11838298317)
+   
+
+2. **Lenke til en fungerende GitHub Actions workflow på en annen branch**: 
+    
+    [Vellykket workflow for terraform plan på annen branch](https://github.com/Svendzen/DevOpsExam2024/actions/runs/11838167156)
+   
+
+3. **SQS-Kø URL**: 
+ 
+    `https://sqs.eu-west-1.amazonaws.com/244530008913/image-generation-queue-9`
+    
+    Eksempel:
+
+    ```console 
+    aws sqs send-message \ --queue-url "https://sqs.eu-west-1.amazonaws.com/244530008913/image-generation-queue-9" \ --message-body "En katt og en hund som utforsker verdensrommet sammen, svevende blant stjernene med små astronautdrakter" 
+    ```
