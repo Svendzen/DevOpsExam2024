@@ -25,7 +25,7 @@ jobs:
 
       # Bygg Docker image
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sqs-client:latest -f java_sqs_client/Dockerfile java_sqs_client
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sqs-client:latest -f ./java_sqs_client/Dockerfile ./java_sqs_client
 
       # Pushe Docker image til Docker Hub
       - name: Push Docker image
