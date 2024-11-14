@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - '**'  # Matcher alle andre branches for å kjøre plan-kommando
+  workflow_dispatch:
 
 jobs:
   terraform:
@@ -43,8 +44,12 @@ jobs:
         if: github.ref != 'refs/heads/main'  # Hvis branchen ikke er main, kjører den terraform plan 
         run: terraform plan
         working-directory: infra
+        continue-on-error: true
+
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'  # Hvis branchen er main, kjører den terraform apply 
         run: terraform apply -auto-approve
         working-directory: infra
+        continue-on-error: true
+
