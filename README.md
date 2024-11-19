@@ -63,8 +63,7 @@ Send en JSON-payload med en `prompt` som beskriver hva slags bilde som skal gene
     ```
 
 ### Oppgave 4
-**Viktig!** Sett e-postadressen som skal få alerts i en "terraform.tfvars" fil under infra mappen og kall variabelen "alert_email".
-
+ **Viktig!** Legg inn e-postadressen som skal motta varsler i en fil kalt terraform.tfvars under infra-mappen. Bruk variabelen alert_email til dette.
 
 Slik så det ut når jeg trigget alarmen med en threshold på 30 sekunder:
 ![Bilde som viser at alarmen utløses i CloudWatch](img/Screenshot_Alarm.png)
