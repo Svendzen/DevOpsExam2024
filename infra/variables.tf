@@ -43,5 +43,5 @@ variable "alert_email" {
 variable "age_threshold" {
   description = "Aldersgrensen for ApproximateAgeOfOldestMessage i sekunder."
   type        = number
-  default     = 30           # Eksempelterskel, kan justeres
+  default     = 30 # Eksempelterskel, kan justeres
 }
