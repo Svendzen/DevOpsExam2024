@@ -91,3 +91,13 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
   batch_size       = 10
   enabled          = true
 }
+
+# Alarm-module for å sette opp overvåking på SQS-køen.
+# Alarmen overvåker alderen på den eldste meldingen i køen og sender et varsel
+# hvis meldingen ikke er behandlet innen den definerte terskelen (age_threshold).
+# Denne modulen inkluderer også en SNS-konfigurasjon for å sende varsel via e-post.
+module "sqs_age_alarm" {
+  source        = "./alarm_module"      # Sti til alarm-modulen som inneholder logikken.
+  alert_email   = var.alert_email       # E-postadresse som mottar varsler. Settes i .tfvars fil.
+  age_threshold = var.age_threshold     # Terskel i sekunder før alarmen trigges. Juster etter behov.
+}

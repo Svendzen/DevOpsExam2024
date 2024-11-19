@@ -1,27 +1,31 @@
+# Cloud9-mappen og virtuelle miljøer
 .c9/
 .venv/
+
+# Terraform-filer og tilhørende state
 .terraform/
-
-
-# Ignorer Terraform state-filer og sikkerhetskopier
 *.tfstate
 *.tfstate.backup
-.terraform/
 .terraform.lock.hcl
-
-# Ignorer ZIP-filer og andre binærfiler
-*.zip
-
-# Ignorer JAR-filer
-*.jar
-
-# Ignorer Terraform-krasjlogger
 crash.log
 
-# Ignorer output-filer og midlertidige filer
-*.out
+# Bygg- og output-filer fra Java/Maven-prosjekt
+*.jar
+*.war
+*.ear
+*.class
+target/      
+out/
 *.log
 *.bak
 
-# Ignorer variabel-filer med sensitive data
-*.tfvars
+# ZIP- og binærfiler
+*.zip
+
+# Midlertidige og variabel-filer
+*.out
+*.tfvars  # Ignorerer variabel-filer med sensitive data
+
+# Ignorer OS-spesifikke filer
+.DS_Store
+Thumbs.db
