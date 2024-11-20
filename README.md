@@ -178,7 +178,9 @@ I denne oppgaven har jeg skrevet Terraform-kode for å konfigurere en AWS Lambda
     Eksempel på hvordan sende melding til køen:
 
     ```console 
-    aws sqs send-message \ --queue-url "https://sqs.eu-west-1.amazonaws.com/244530008913/image-generation-queue-9" \ --message-body "En katt og en hund som utforsker verdensrommet sammen, svevende blant stjernene med små astronautdrakter" 
+    aws sqs send-message \
+    --queue-url "https://sqs.eu-west-1.amazonaws.com/244530008913/image-generation-queue-9" \
+    --message-body "En katt og en hund som utforsker verdensrommet sammen, svevende blant stjernene med små astronautdrakter"
     ```
 
 **Koden og konfigurasjonen ligger i mappen `infra/` i repositoryet.**
