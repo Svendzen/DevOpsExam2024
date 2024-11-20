@@ -366,7 +366,9 @@ Oppsummert gir serverless fordeler som redusert operasjonelt ansvar og innebygd 
     `svendzen/sqs-client:latest`
 
 * **Oppgave 4:**
-  * Koden finnes under `infra/` mappen.
+
+  Koden finnes under `infra/` mappen.
 
 * **Oppgave 5:**
-  * [Klikk her](https://github.com/Svendzen/DevOpsExam2024/main/README.md#oppgave-5-serverless-function-as-a-service-vs-container-teknologi)
+
+  Besvarelsen finnes i denne README-filen i seksjonen for oppgave 5.
