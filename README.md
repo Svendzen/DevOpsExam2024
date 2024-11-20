@@ -1,7 +1,8 @@
 # Dev Ops i Skyen Eksamen 2024
 Dette er min besvarelse for 2024 eksamen i emnet "DevOps i Skyen" på Høyskolen Kristiania.
 
-**Sensor kan finne en tabell med KUN besvarelsene på bunnen av denne README filen.**
+**En tabell med oversikt over leveransene ligger nederst i denne README-filen.**
+
 
 ## Oppgave 1: AWS Lambda
 ### A. Implementering Lambda-funksjon med SAM og API Gateway
