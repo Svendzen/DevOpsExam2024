@@ -113,30 +113,33 @@ Koden og workflow-filen ligger i `.github/workflows/deploy_lambda.yml` i reposit
 
 
 ## Oppgave 2: Infrastruktur med Terraform og SQS
+### A. Infrastruktur som kode
 
 I denne oppgaven har jeg skrevet Terraform-kode for å konfigurere en AWS Lambda-funksjon som prosesserer meldinger fra en SQS-kø. Lambda-funksjonen er basert på koden i `lambda_sqs.py` og lagrer genererte bilder i S3-bucketen `pgr301-couch-explorers` under kandidatnummeret mitt.
-
-
-### A. Infrastruktur som kode
 
 **Implementasjon:**
 
 - **SQS-kø:**
-  - Opprettet en SQS-kø ved hjelp av `aws_sqs_queue`-ressursen i Terraform.
+  - Opprettet en SQS-kø ved hjelp av `aws_sqs_queue`-ressursen i Terraform, med navnet `image-generation-queue-9`.
   - Konfigurert køen med standardinnstillinger og lagret kø-URL-en som en output-variabel.
 
 - **Lambda-funksjon:**
-  - Brukte `aws_lambda_function`-ressursen til å definere Lambda-funksjonen.
+  - Brukte `aws_lambda_function`-ressursen til å definere Lambda-funksjonen, med navnet `Lambda_Image_Processor_9`.
   - Lastet opp koden fra `lambda_sqs.py`, pakket som en zip-fil ved hjelp av Terraform.
   - Konfigurerte miljøvariabler for S3-bucket og kandidatnummer.
   - **Timeout:** Satt funksjonens timeout til 30 sekunder for å håndtere bildebehandlingen.
 
 - **IAM-roller og policyer:**
-  - Opprettet en IAM-rolle for Lambda-funksjonen med nødvendige policyer.
-  - Tillatelser inkluderer tilgang til SQS, S3 og AWS Bedrock.
+  - Opprettet en IAM-rolle for Lambda-funksjonen med navnet `lambda_execution_role_9`, med nødvendige policyer.
+  - **Policyer:**
+    - Brukte `aws_iam_role_policy` til å tildele policyen `lambda_policy_9` til rollen.
+    - `lambda_policy_9` gir tillatelser til:
+        - Å lese fra SQS-køen `image-generation-queue-9`.
+        - Å skrive til S3-bucketen `pgr301-couch-explorers` under stien `9/*`.
+        - Å kalle AWS Bedrock-modellen `amazon.titan-image-generator-v1`.
 
 - **Integrasjon mellom SQS og Lambda:**
-  - Brukte `aws_lambda_event_source_mapping` for å koble SQS-køen til Lambda-funksjonen.
+  - Brukte `aws_lambda_event_source_mapping` for å koble SQS-køen `image-generation-queue-9` til Lambda-funksjonen `Lambda_Image_Processor_9`.
   - Konfigurerte batch-størrelse og aktivering av mappingen.
 
 - **State-fil lagring:**
@@ -145,6 +148,8 @@ I denne oppgaven har jeg skrevet Terraform-kode for å konfigurere en AWS Lambda
 ---
 
 ### B. GitHub Actions Workflow for Terraform
+
+I denne oppgaven satte jeg opp en GitHub Actions workflow for å automatisere bygging, planlegging og deploy av Terraform-konfigurasjonen. Workflowen sikrer at infrastrukturen holdes oppdatert ved endringer i koden.
 
 **Workflow Detaljer:**
 
@@ -192,20 +197,20 @@ I denne oppgaven har jeg skrevet Terraform-kode for å konfigurere en AWS Lambda
 
 ## Oppgave 3: Javaklient og Docker
 
-Denne oppgaven går ut på å lage et Docker-image av Java SQS-klienten slik at teamet kan bruke klienten uten å måtte ha Java installert lokalt. Klienten sender meldinger til SQS-køen med et bildeprompt som spesifisert fra kommandolinjen.
+I denne oppgaven laget jeg et Docker-image for en Java SQS-klient, slik at teamet kan sende meldinger til SQS-køen uten å måtte installere Java lokalt. Klienten tar bildeprompter som input og sender dem til køen.
 
 ### A. Dockerfile
 
 **Implementasjon:**
 
 - **Multi-stage build:**
-  - Dockerfile er skrevet med en multi-stage strategi for å redusere imagestørrelsen.
-  - **Bygg-steg:** Bruker en Maven-basert image for å bygge Java-prosjektet.
-  - **Runtime-steg:** Bruker en minimal Java-runtime image for å kjøre den kompilerte JAR-filen.
+  - Dockerfile bruker en multi-stage strategi for å redusere størrelsen på imaget:
+      - **Bygg-steg:** Kompilerer Java-prosjektet ved hjelp av Maven.
+      - **Runtime-steg:** Bruker et minimalt Java-runtime image for å kjøre den kompilerte JAR-filen.
 
-- **Konfigurasjon:**
-  - Dockerfile konfigurerer miljøvariabler som `SQS_QUEUE_URL` for å spesifisere køen klienten skal sende meldinger til.
-  - Prompten for bildegenerering tas som et kommandolinjeargument når containeren kjøres.
+- **Miljøvariabler:**
+  - `SQS_QUEUE_URL` spesifiserer køen klienten skal sende meldinger til.
+  - Prompten for bildegenerering angis som et argument når containeren kjøres.
 
 ---
 
@@ -216,9 +221,9 @@ Denne oppgaven går ut på å lage et Docker-image av Java SQS-klienten slik at 
 - **Trigger:**
   - Workflowen kjører automatisk ved hver push til `main`-branchen.
 
-- **Jobber i workflowen:**
+- **Steg i workflowen:**
 
-  - **Sjekker ut koden:** Bruker `actions/checkout@v3`.
+  - **Sjekker ut koden:** Henter repositoryet med `actions/checkout@v3`.
 
   - **Logger inn på Docker Hub:** Bruker Docker Hub credentials lagret i GitHub Secrets.
 
