@@ -23,8 +23,8 @@ resource "aws_iam_role" "lambda_execution_role" {
 }
 
 # Policyer for IAM-rollen
-resource "aws_iam_role_policy" "lambda_policy" {
-  name = "lambda_policy"
+resource "aws_iam_role_policy" "lambda_policy_9" {
+  name = "lambda_policy_9"
   role = aws_iam_role.lambda_execution_role.id
   policy = jsonencode({
     Version = "2012-10-17"
@@ -74,7 +74,7 @@ resource "aws_lambda_function" "image_processor_lambda" {
   timeout          = 30                                               # Øker timeout til 30 sekunder
   memory_size      = 256                                              # Øker minne til 256 MB for bedre ytelse
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256 # Automatisk hash-basert oppdatering
-
+  
 
   environment {
     variables = {
