@@ -7,27 +7,27 @@ Dette er min besvarelse for 2024 eksamen i emnet "DevOps i Skyen" på Høyskolen
 ## Oppgave 1: AWS Lambda
 ### A. Implementering Lambda-funksjon med SAM og API Gateway
 
-I denne oppgaven har jeg implementert en AWS Lambda-funksjon ved hjelp av AWS SAM (Serverless Application Model). Funksjonen er basert på koden fra generate_image.py og er skrevet i Python. Den eksponeres via et POST-endepunkt gjennom API Gateway.
+I denne oppgaven har jeg implementert en AWS Lambda-funksjon med navnet `GenerateImageFunction` ved hjelp av AWS SAM (Serverless Application Model). Funksjonen er basert på koden fra `app.py` og er skrevet i Python. Den eksponeres via et POST-endepunkt gjennom API Gateway på stien `/generate-image`.
 
 **Hvordan funksjonen fungerer i praksis:**
 
-* **Mottar en HTTP POST-forespørsel**: Funksjonen trigges når det sendes en POST-forespørsel til API Gateway-endepunktet. Forespørselen inneholder et JSON-objekt med nøkkelen `prompt`, som inneholder teksten som beskriver bildet som skal genereres.
+* **Mottar en HTTP POST-forespørsel**: Funksjonen trigges når det sendes en POST-forespørsel til API Gateway-endepunktet ` /generate-image`. Forespørselen inneholder et JSON-objekt med nøkkelen `prompt`, som inneholder teksten som beskriver bildet som skal genereres.
 
 * **Genererer bilde med AWS Bedrock**: Lambda-funksjonen bruker AWS Bedrock til å generere et bilde basert på `prompt`-teksten fra forespørselen.
 
-* **Lagrer bildet i S3-bucket**: Det genererte bildet lagres i S3-bucketen `pgr301-couch-explorers`, med kandidatnummeret mitt som prefiks i objektets nøkkel (f.eks.: `s3://pgr301-couch-explorers/<kandidatnr>/generated_images/titan_12345.png`).
+* **Lagrer bildet i S3-bucket**: Det genererte bildet lagres i S3-bucketen `pgr301-couch-explorers`, med kandidatnummeret mitt som prefiks i objektets nøkkel (f.eks.: `s3://pgr301-couch-explorers/9/generated_images/titan_<seed>.png`).
 
 **AWS-tjenester og ressurser som brukes**:
 
-* **AWS Lambda:** Kjører funksjonen som håndterer bildegenerering og lagring.
+* **AWS Lambda:** Kjører funksjonen `GenerateImageFunction` som håndterer bildegenerering og lagring.
 
-* **Amazon API Gateway:** Eksponerer Lambda-funksjonen via et HTTP POST-endepunkt, slik at den kan kalles eksternt.
+* **Amazon API Gateway:** Eksponerer Lambda-funksjonen via et HTTP POST-endepunkt `/generate-image`, slik at den kan kalles eksternt.
 
 * **AWS Bedrock:** Tjenesten brukes for å generere bildet basert på teksten i `prompt`.
 
 * **Amazon S3:** Lagrer de genererte bildene i den eksisterende bucketen `pgr301-couch-explorers`.
 
-* **IAM Roller og Policyer:** En egendefinert IAM-rolle er opprettet for Lambda-funksjonen, som gir nødvendige tillatelser til å skrive til S3-bucketen og å kalle AWS Bedrock-tjenesten.
+* **IAM Roller og Policyer:** En egendefinert IAM-rolle er opprettet for `GenerateImageFunction`.
 
 **Implementasjonsdetaljer:**
 
@@ -37,11 +37,15 @@ I denne oppgaven har jeg implementert en AWS Lambda-funksjon ved hjelp av AWS SA
 
 * **Timeout-innstilling:** Lambda-funksjonens timeout er konfigurert til 30 sekunder for å håndtere tiden det kan ta å generere et bilde. Det har vist seg at det tar rundt 10-12 sekunder å generere et bilde, men hvis 30 sekunder ikke er tilstrekkelig, kan timeout-innstillingen økes.
 
-* **SAM-applikasjon:** SAM brukes til å definere infrastrukturen som kode, inkludert Lambda-funksjonen, API Gateway, IAM-roller og miljøvariabler.
+* **SAM-applikasjon:** SAM brukes til å definere infrastrukturen som kode, inkludert Lambda-funkjsonen `GenerateImageFunction`, API Gateway, IAM-roller og miljøvariabler.
 
 * **Deploy med SAM:** Applikasjonen er deployet til AWS ved hjelp av `sam deploy`, og endepunktet er verifisert til å fungere korrekt.
 
-* **Egendefinert IAM-Rolle:** Den egendefinerte IAM-rollen for Lambda-funksjonen gir nødvendige tillatelser til å skrive til S3 og kalle AWS Bedrock. Dette følger prinsippet om minste privilegier og forbedrer sikkerheten
+* **Egendefinert IAM-Rolle:** Den egendefinerte IAM-rollen opprettet av SAM for `GenerateImageFunction`, gir nødvendige tillatelser til å skrive til S3 og kalle AWS Bedrock. Dette følger prinsippet om minste privilegier og forbedrer sikkerheten.
+
+**Deploy med SAM:**
+
+Applikasjonen er deployet til AWS ved hjelp av `sam deploy`, med stack-navnet `sam-lambda-stack-9`, og endepunktet er verifisert til å fungere korrekt.
 
 **Koden og konfigurasjonen ligger i mappen `sam_lambda/` i repositoryet, og er godt kommentert for å forklare detaljer i implementasjonen.**
 
@@ -61,7 +65,7 @@ Funksjonen kan testes ved å sende en POST-forespørsel med JSON-body slik som f
 ---
 ### B. Opprettelse av GitHub Actions Workflow for SAM-deploy
 
-I denne oppgaven har jeg satt opp en GitHub Actions workflow som automatisk deployer Lambda-funksjonen hver gang det skjer en push til `main`-branchen. Dette sikrer kontinuerlig levering og at funksjonen alltid er oppdatert uten behov for manuell deploy.
+I denne oppgaven har jeg satt opp en GitHub Actions workflow med filnavnet `.github/workflows/deploy_lambda.yml` som automatisk deployer Lambda-funksjonen hver gang det skjer en push til `main`-branchen. Dette sikrer kontinuerlig levering og at funksjonen alltid er oppdatert uten behov for manuell deploy.
 
 **Workflow Detaljer:**
 
@@ -103,7 +107,7 @@ I denne oppgaven har jeg satt opp en GitHub Actions workflow som automatisk depl
 
   [Vellykket GitHub Actions kjøring](https://github.com/Svendzen/DevOpsExam2024/actions/runs/11801530824)
 
-Sensor kan følge lenken for å se detaljene i workflow-kjøringen og verifisere at deploy ble utført korrekt.
+Følg lenken for å se detaljene i workflow-kjøringen og verifisere at deploy ble utført korrekt.
 
 Koden og workflow-filen ligger i `.github/workflows/deploy_lambda.yml` i repositoryet.
 
