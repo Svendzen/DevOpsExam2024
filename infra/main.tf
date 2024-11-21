@@ -74,7 +74,7 @@ resource "aws_lambda_function" "image_processor_lambda" {
   timeout          = 30                                               # Øker timeout til 30 sekunder
   memory_size      = 256                                              # Øker minne til 256 MB for bedre ytelse
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256 # Automatisk hash-basert oppdatering
-  
+
 
   environment {
     variables = {
