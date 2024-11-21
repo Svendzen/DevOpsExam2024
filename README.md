@@ -216,6 +216,8 @@ I denne oppgaven laget jeg et Docker-image for en Java SQS-klient, slik at teame
 
 ### B. GitHub Actions Workflow for Docker
 
+I denne oppgaven automatiserte jeg bygging og publisering av Docker-image for SQS-klienten ved hjelp av GitHub Actions. Workflowen sikrer at imaget alltid er oppdatert og tilgjengelig på Docker Hub etter hver push til `main`-branchen.
+
 **Workflow Detaljer:**
 
 - **Trigger:**
@@ -257,7 +259,7 @@ I denne oppgaven laget jeg et Docker-image for en Java SQS-klient, slik at teame
 
 ## Oppgave 4: Metrics og overvåkning
 
- **Viktig!** Legg inn e-postadressen som skal motta varsler i en fil kalt terraform.tfvars under infra-mappen. Bruk variabelen alert_email til dette.
+ **Viktig!** Legg inn e-postadressen som skal motta varsler i en fil kalt `terraform.tfvars` under `infra`-mappen. Bruk variabelen `alert_email` til dette.
 
 ---
 
@@ -265,17 +267,11 @@ Denne oppgaven fokuserer på å sette opp overvåkning for SQS-køen ved hjelp a
 
 **Infrastrukturkode:**
 
-- **CloudWatch-alarm:** Terraform-koden er utvidet med en CloudWatch-alarm som overvåker metrikken `ApproximateAgeOfOldestMessage` for SQS-køen. Denne metrikken måler hvor gammel den eldste meldingen i køen er og kan indikere forsinkelser i behandlingen.
+- **CloudWatch-alarm:** Terraform-koden definerer alarmen `SQSApproximateAgeOfOldestMessageAlarm-9`, som overvåker metrikken `ApproximateAgeOfOldestMessage` for SQS-køen `image-generation-queue-9`. Denne metrikken måler hvor gammel den eldste meldingen i køen er og kan indikere forsinkelser i behandlingen.
 
 - **Terskelverdi:** Alarmen er konfigurert til å utløses hvis meldingsalderen overskrider en definert terskel, som kan justeres etter behov. Denne terskelen er angitt i Terraform-koden og kan enkelt oppdateres.
 
-- **Varsling via e-post:** Når alarmen utløses, sendes en e-post til en mottaker spesifisert som en variabel i Terraform. E-postadressen er definert i en `terraform.tfvars`-fil for enkel endring uten å måtte oppdatere selve koden.
-
-**Tilnærming:**
-
-- Terraform brukes til å definere CloudWatch-alarmen som kode, noe som sikrer konsistens i oppsettet og enkel reproduksjon.
-- Alarmen er knyttet til SQS-køen som ble opprettet i oppgave 2.
-- Konfigurasjonen er gjort dynamisk ved å bruke variabler for alarmens terskelverdi og e-postmottaker.
+- **Varsling via e-post:** Når alarmen utløses, sendes en e-post via SNS-emnet `sqs-age-alarm-topic-9` til en mottaker spesifisert som en variabel i Terraform. E-postadressen er definert i en `terraform.tfvars`-fil for enkel endring uten å måtte oppdatere selve koden.
 
 **All nødvendig konfigurasjon finnes i Terraform-koden under `infra/`.**
 
